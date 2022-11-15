@@ -1,9 +1,10 @@
 import asyncio
+import keep_alive
 import os
 import random
 import discord
 import time
-from Discord.ui import Button, View
+from discord.ui import Button, View
 import requests 
 import tracemalloc
 from discord.ext import commands
@@ -33,21 +34,25 @@ async def Name(ctx):
 async def Arithmetic(ctx, num1, num2, MathType):
   if (MathType == "1"):
     Answer = int(num1) + int(num2)
-    ctx.send(Answer)
+    await ctx.send(Answer + str(" is your sum."))
+    MathType = "1"
   if (MathType == "2"):
     Answer = int(num1) - int(num2)
-    ctx.send(Answer)
+    await ctx.send(Answer + str(" is your difference."))
+    MathType = "2"
   if (MathType == "3"):
     Answer = int(num1) * int(num2)
-    ctx.send(Answer)
+    await ctx.send(Answer + str(" is your product."))
+    MathType = "3"
   if (MathType == "4"):
     Answer = int(num1) / int(num2)
-    ctx.send(Answer)
-  else:
-    ctx.reply("I don't understand what you are trying to do... make sure you are using the proper syntax:")
-    ctx.reply("!Petey Arithmetic, Variable1, Variable2, MathType (1 = 'Addition', 2 = 'Subtraction'), 3 = 'Multiplication' 4 = 'Division.'")
+    await ctx.send(Answer + str(" is your quotient."))
+    MathType = "4"
+ # elif (MathType != ):
+#    await ctx.reply("I don't understand what you are trying to do... make sure you are using the proper syntax:")
+#    await ctx.reply("!Petey Arithmetic, Variable1, Variable2, MathType (1 = 'Addition', 2 = 'Subtraction', 3 = 'Multiplication' 4 = 'Division.')")
 
-@bot.command(aliases=["date"])
+#@bot.command(aliases=["date"])
 async def Date(ctx):
   DateRandom = random.randint(1, 4)
   if (DateRandom == 1):
@@ -59,7 +64,7 @@ async def Date(ctx):
   if (DateRandom == 4):
     ctx.send('DATED.PNG')
 
-@bot.command(aliases=["8ball", "8Ball"])
+#@bot.command(aliases=["8ball", "8Ball"])
 async def Eightball(ctx, PREGUNTO):
   Eightball = random.randint(1, 5)
   if (Eightball == 1):
@@ -78,14 +83,14 @@ async def Eightball(ctx, PREGUNTO):
     ctx.send(str(PREGUNTO), str("No, not in a million years."))
   if (Eightball == 8):
     ctx.send(str(PREGUNTO), str("no"))
-@bot.command()
-
+    
+@bot.command(brief="Snytax: Petey! Spanish ... Spanish dictionary basic.")
 async def Spanish(ctx, word):
-  ctx.send(spanishdict.com/translate/ + word)
+  await ctx.send("spanishdict.com/translate/" + word)
 
 
 
-@bot.command(aliases=["rps", "RockPaperScissors", "rockpaperscissors"])
+#@bot.command(aliases=["rps", "RockPaperScissors", "rockpaperscissors"])
 async def RPS(ctx, word):
   ListOfMessages = ["YOU DARE CHALLENGE THE BEST ROCK PAPER SCISSORS BOT EVER?", "YOU FOOL, YOU MORON, YOU ABSOLUTE BAFOON! I AM THE KING OF ROCKER PAPER SCISSORS." "HAHAHAHAHAHAHAHAHAHAHA WHAT A FOOL YOU ARE, TRYING TO CHALLENGE THE BEST ROCK PAPER S CISSORS PLAYER EVER.", "Abosolute bozo you are, thinking you can beat the undefeated rock paper scissors robot." "Sad, it's sad, very sad that your monkey brain believes that you can beat a rock paper scissors GOD."]
   ctx.send(ListOfMessages[random.randint(1, 5)])
@@ -168,7 +173,9 @@ async def Weather(ctx, zip, type):
 async def JtE(ctx, SEARCHWORD):
    #Variable to hold the URL
    URL = "https://jisho.org/api/v1/search/words?keyword=" + str(SEARCHWORD)
+  
    slug = (requests.get("https://jisho.org/api/v1/search/words?keyword=" + str(SEARCHWORD)).json()['data'][0]["senses"][0]["english_definitions"])
+  
    slug3 = (requests.get("https://jisho.org/api/v1/search/words?keyword=" + str(SEARCHWORD)).json()['data'][0]["senses"][0]["parts_of_speech"])
    #Ask our bot to go to the URL
    req = requests.get(URL)
@@ -189,7 +196,9 @@ async def EtJ(ctx, SEARCHWORD):
    #Variable to hold the URL
    URL = "https://jisho.org/api/v1/search/words?keyword=" + str(SEARCHWORD)
    slug = (requests.get("https://jisho.org/api/v1/search/words?keyword=" + str(SEARCHWORD)).json()['data'][0]["japanese"][0]["word"])
+  
    slug2 = (requests.get("https://jisho.org/api/v1/search/words?keyword=" + str(SEARCHWORD)).json()['data'][0]["japanese"][0]["reading"])
+  
    slug3 = (requests.get("https://jisho.org/api/v1/search/words?keyword=" + str(SEARCHWORD)).json()['data'][0]["senses"][0]["parts_of_speech"])
    #Ask our bot to go to the URL
    req = requests.get(URL)
@@ -276,11 +285,22 @@ async def findWebsite(ctx, search):
   
 @bot.command(aliases=["Message"], brief="Syntax: Petey! Message ... B U T T O N S")
 async def message(ctx):
-  button1 = Button(label = "Click Me!", style = discord.ButtonStyle.orange, emoji = "💪")
+  button1 = Button(label = "Click me for some delicious pie!", style = discord.ButtonStyle.red, emoji = "💪")
   button2 = Button(label = "Go to Petey's school website!", url="https://petersheiniscodehsme-4526095.codehs.me/", emoji = "🤓")
   button3 = Button(label = "Go to Big Sean's school website!", url="https://brianzhang247codehsme-4526119.codehs.me/index.html", emoji = "😎")
-bot.run(my_secret) 
 
+  async def button1Clicked(interaction):
+    await interaction.response.send_message("3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387528865875332083814206171776691473035982534904287554687311595628638823537875937519577818577805321712268066130019278766111959092164201989")
+
+  button1.callback = button1Clicked
+  view = View()
+  view.add_item(button1)
+  view.add_item(button2)
+  view.add_item(button3)
+
+  await ctx.send("OMG THESE BUTTONS ARE SO COOL WOWWWWIUAHIUGUEIHVUINSEDJFHJUBEHGTFAUICUIHENGHIAIFCVETGUAEHIGFUET", view=view)
+keep_alive.keep_alive()
+bot.run(my_secret) 
 #Copy your bot token from discord developer
 
 #Mr.Willis code :O below:
